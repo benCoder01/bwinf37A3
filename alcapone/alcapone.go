@@ -19,7 +19,7 @@ func Choose(pValues []int) []int {
 		replaceValues(lowestDistance, average)
 	}
 
-	// restlichen Werte auffüllen
+	// restlichen Werte in values auffüllen
 	for len(values) < 10 {
 		values = append(values, 1)
 	}

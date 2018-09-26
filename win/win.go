@@ -1,45 +1,29 @@
 package win
 
-
-// CalculateCaponeWin berechnet den Gesamtgewinn von AlCapone Jr.
-// Dafür werden zum einen die Zahl der Teilnehmer und die Zahlen von AlCapone eingelesen.
-func CalculateCaponeWin(participantNumbers []int, alCaponeNumbers []int) int {
-	if len(alCaponeNumbers) != 10 {
-		return -1
-	}
-
-	payout := 0
-
-	// aus Speichergründen wir nearestNumber vor der Schleife initialisiert
-	var nearestNumber int
+func ComputeWin(participantNumbers []int, alCaponeNumbers []int) int {
+	win := 0
 
 	for _, number := range participantNumbers {
-		// finde in den Zahlen von AlCapone die am besten passende Zahl
-		nearestNumber = findNearestNumber(number, alCaponeNumbers)
-		payout += calculateDifference(number, nearestNumber)
+		difference := getDifferenceToNearestNumber(number,alCaponeNumbers)
+		win += 25 - difference // Differenz zwischen Einsatz und Auszahlung
 	}
 
-	// Gib die Einsätze der Teilnehmer - dem was ausgezahlt werden muss.
-	return (len(participantNumbers) * 25) - payout
-
+	return win
 }
 
-// findNearestNumber findet in den von AlCapone Jr. gewählten Zahlen die Zahl, die am nächsten zu number dran ist.
-func findNearestNumber(number int, alCaponeNumbers []int) int {
-	nearestNumber := alCaponeNumbers[0] //alCaponeNumbers haben immer eine Länge von 10
+func getDifferenceToNearestNumber(number int, alCaponeNumbers []int) int {
+	nearestNumber := alCaponeNumbers[0]
 
-	for _, element := range alCaponeNumbers {
-		if calculateDifference(number, element) < calculateDifference(number, nearestNumber) {
-			// die Zahl in Element ist näher an number dran
-			nearestNumber = element
+	for _, caponeNumber := range alCaponeNumbers {
+		if difference(caponeNumber, number) < difference(nearestNumber, number) {
+			nearestNumber = caponeNumber
 		}
 	}
 
-	return nearestNumber
+	return difference(nearestNumber, number)
 }
 
-// calculateDifference berechnet die Differnz zweier Zahlen, ohne dabei auf weiter Packte zuzugreifen.
-func calculateDifference(number1 int, number2 int) int {
+func difference(number1 int, number2 int) int {
 	difference := number1 - number2
 
 	if difference < 0 {
@@ -48,4 +32,3 @@ func calculateDifference(number1 int, number2 int) int {
 
 	return difference
 }
-

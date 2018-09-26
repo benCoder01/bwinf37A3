@@ -14,17 +14,17 @@ func main() {
 }
 
 func makeNumbers() {
-	participantNumbers := converter.Convert("./example_data/a3-Voll_daneben_beispieldaten_beispiel1.txt")
+	participantNumbers := converter.Convert("./example_data/a3-Voll_daneben_beispieldaten_beispiel3.txt")
 	//participantNumbers := converter.Convert("./example_data/custom.txt")
 
 	sorter.Sort(participantNumbers)
 
-
 	alCaponeNumbers := alcapone.Choose(participantNumbers)
 	printArray(alCaponeNumbers)
 
-	win := win.CalculateCaponeWin(participantNumbers, alCaponeNumbers)
-	println("Gewinn: ", win)
+	// Gewinnberechnung
+	alCaponeWin := win.ComputeWin(participantNumbers, alCaponeNumbers)
+	println("Gewinn: ", alCaponeWin)
 }
 
 func printArray(values []int) {
