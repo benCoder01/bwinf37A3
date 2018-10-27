@@ -1,28 +1,41 @@
+
 package win
 
-func ComputeWin(participantNumbers []int, alCaponeNumbers []int) int {
-	win := 0
+import "fmt"
 
-	for _, number := range participantNumbers {
-		difference := getDifferenceToNearestNumber(number,alCaponeNumbers)
-		win += 25 - difference // Differenz zwischen Einsatz und Auszahlung
+// CalculateCaponeWin berechnet den Gesamtgewinn von AlCapone Jr.
+// Dafür werden zum einen die Zahl der Teilnehmer und die Zahlen von AlCapone eingelesen.
+func CalculateCaponeWin(participantNumbers []int, alCaponeNumbers []int) int {
+	if len(alCaponeNumbers) != 10 {
+		fmt.Println("Error: Die Anzahl der Zahlen ist nicht 10")
+		return 0
 	}
 
-	return win
+	payout := 0 // Nettoverlust
+
+	for _, number := range participantNumbers {
+		nearestNumber := findNearestNumber(number, alCaponeNumbers)
+		payout += difference(number, nearestNumber)
+	}
+
+	return (len(participantNumbers) * 25) - payout // Nettoverlust mit den Einstätzen verrechnet
 }
 
-func getDifferenceToNearestNumber(number int, alCaponeNumbers []int) int {
-	nearestNumber := alCaponeNumbers[0]
+// findNearestNumber findet in den von AlCapone Jr. gewählten Zahlen die Zahl, die am nächsten zu number dran ist.
+func findNearestNumber(number int, alCaponeNumbers []int) int {
+	nearestNumber := alCaponeNumbers[0] //alCaponeNumbers haben immer eine Länge von 10
 
-	for _, caponeNumber := range alCaponeNumbers {
-		if difference(caponeNumber, number) < difference(nearestNumber, number) {
-			nearestNumber = caponeNumber
+	for _, element := range alCaponeNumbers {
+		if difference(number, element) < difference(number, nearestNumber) {
+			// die Zahl in Element ist näher an number dran
+			nearestNumber = element
 		}
 	}
 
-	return difference(nearestNumber, number)
+	return nearestNumber
 }
 
+// difference berechnet den Betrag der Differenz zweier Zahlen.
 func difference(number1 int, number2 int) int {
 	difference := number1 - number2
 
