@@ -539,7 +539,7 @@ $endif$
 %
 \usepackage{titling}
 \title{$title$}
-\author{$for(author)$$author$$sep$, $endfor$}
+\author{$for(author)$$author$$sep$ \\\\ $endfor$}
 
 %
 % tables
@@ -704,7 +704,7 @@ $if(subtitle)$
 $endif$
 \vskip 2em
 \noindent
-{\Large \textsf{$for(author)$$author$$sep$, $endfor$}
+{\Large \textsf{$for(author)$$author$$sep$ \newline $endfor$}
 \vfill
 }
 

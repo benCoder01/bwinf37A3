@@ -5,37 +5,33 @@ import (
 	"github.com/benCoder01/bwinf37A3/alcapone"
 	"github.com/benCoder01/bwinf37A3/converter"
 	"github.com/benCoder01/bwinf37A3/sorter"
-	"github.com/benCoder01/bwinf37A3/win"
 	"os"
-
-	//"github.com/benCoder01/bwinf37A3/win"
 )
 
 func main() {
-	// Kommandozeilenargumente auslesen
+	// Kommandozeilenargumente einlesen
+	// z.B.: ./_example_data/a3-Voll_daneben_beispieldaten_beispiel2.txt
 	commandLineArgs := os.Args
 
 	if len(commandLineArgs) != 2 {
-		panic("Falsche Eingabe: ./main <Pfad-zur-Datei>") // z.B.: ./_example_data/a3-Voll_daneben_beispieldaten_beispiel2.txt
+		panic("Falsche Eingabe: ./main <Pfad-zur-Datei>")
 	}
 
 	filePath := os.Args[1]
 
-	participantNumbers := converter.Convert(filePath)
+	fmt.Println("Die AlCapone-Zahlen für die Datei: ", filePath)
 
+	participantNumbers := converter.Convert(filePath)
 	sorter.Sort(participantNumbers)
 
-	caponeNumbers := alcapone.Choose(participantNumbers)
-	// caponeNumbers := newalcapone.Choose(participantNumbers)
+	// AlCapone-Zahlen und Gewinn berechnen
+	caponeNumbers, win := alcapone.Choose(participantNumbers)
 
-
-	// Glückszahlen bestimmen
-	fmt.Println("Die von AlCapone zu wählenden Glückszahlen:")
+	// Ergebnisse ausgeben
+	fmt.Println("Die von AlCapone zu wählenden Zahlen:")
 	printArray(caponeNumbers)
 
-	// Gewinn ausgeben
-	caponeWin := win.CalculateCaponeWin(participantNumbers, caponeNumbers)
-	fmt.Println("Gewinn: ", caponeWin)
+	fmt.Println("Gewinn: ", win)
 }
 
 func printArray(values []int) {
@@ -43,4 +39,3 @@ func printArray(values []int) {
 		fmt.Println(element)
 	}
 }
-

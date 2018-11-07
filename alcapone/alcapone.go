@@ -1,140 +1,167 @@
+// Package alcapone implementiert den Algorithmus zum Berechnen
+// der Zahlen, die AlCapone Jr. wählen muss. Dabei wird
+// versucht, dass AlCapone Jr. einen möglichst hohen Gewinn
+// erzielt.
 package alcapone
 
-var values []int
-var caponeNumbers []int
+import "github.com/benCoder01/bwinf37A3/win"
 
-type group struct {
+// values enthält ein Array aus Glückszahlen.
+// Dies sind die aufsteigend sortiert.
+var values []int
+
+// groups enthält ein Array aus Gruppen, die aus den
+// Glückszahlen gebildet wurden.
+var groups []Group
+
+// Group repräsentiert eine Gruppe aus Glückszahlen. Anfangs-
+// und Endposition sind inklusive.
+// Außerdem sind die Methoden valid() und find().
+type Group struct {
 	startPos     int // Anfangsposition der Gruppe
-	endPos       int // Endpossition (letzte Stelle der Gruppe im  Array)
-	caponeNumber int // Mittelwert aus allen Zahlen in der Gruppe
+	endPos       int // Endpossition
+	caponeNumber int // Ausgewählte Zahl aus der Gruppe
 	size         int // Anzahl der Zahlen in einer Gruppe
 }
 
-// Choose bekommt ein Array aus Integern, in dem alle gewählten Zahlen der Teilnehmer enthalten sind. Als Rückgabewert gibt die Methode die von AlCapone Jr. zu wählenden Zahlen als Array aus.
-func Choose(pValues []int) []int {
+// GroupPair bezeichnet ein Paar aus Gruppen. Weiterhin sind
+// für GroupPair die Methoden merge(), win() und median()
+// vorhanden. group1 und group2 sind Zeiger, die jeweils auf
+// ein Group Objekt verweisen.
+type GroupPair struct {
+	group1, group2 *Group
+}
+
+// Choose bekommt die sortierten Glückszahlen der Teilnehmer
+// als Array übergeben und berechnet daraus die Zahlen, die
+// AlCapone Jr. wählen sollte. Dabei ist ein Gewinn nicht
+// garantiert, sondern es wird lediglich versucht einen
+// möglichst hohen Gewinn zu erzielen. Bei einer Länge von
+// maximal 10 werden die Glückszahlen als AlCapone-Zahlen
+// zurückgegeben. Vorher wird jedoch die Länge auf 10 erhöht.
+// Ansonsten vergleicht die Funktion den Gewinn zweier
+// Vorgehensweisen: Zum einen das Bilden von Gruppen, zum
+// anderem das Errechnen der Zahlen aus dem Durchschnitt der
+// Glückszahlen in gleich großen Abschnitten. Die Werte der
+// Vorgehensweise mit dem höheren Gewinn werden dann mit
+// dem Gewinn von AlCapone Jr. zurückgegeben.
+func Choose(pValues []int) ([]int, int) {
 	values = pValues
 
-	groups := divideGroups()
-
-	if similarDistance() && len(groups) > 10 {
-		caponeNumbers = caponeNumbersFromSections()
-	}else {
-		for len(groups) > 10 {
-			groupsToMerge := findGroupsToMerge(groups)
-			groups = merge(groups, groupsToMerge[0], groupsToMerge[1])
-		}
-
-		// Alle Zahlen zu dem CaponeNumbers Array hinzufügen
-		for _, group := range groups {
-			caponeNumbers = append(caponeNumbers, group.caponeNumber)
-		}
+	for len(values) < 10 {
+		values = append(values, 1)
 	}
 
-	// Auffüllen der capone Numbers bis die Länge 10 beträgt
-	for len(caponeNumbers) < 10 {
-		caponeNumbers = append(caponeNumbers, 1)
+	if len(values) == 10 {
+		return values, win.Calculate(pValues, values)
 	}
 
-	return caponeNumbers
-}
+	numbersAverage := numbersFromAverage()
+	numbersGroups := numbersFromGroups()
 
-// merge fügt zwei Gruppen, deren Position als Parameter angegeben wird, in dem Array groups zusammen.
-// Die beiden Gruppen müssen direkt hintereinander liegen.
-func merge(groups []group, posGroup1 int, posGroup2 int) []group {
-	if len(groups) < posGroup2-1 || posGroup1+1 != posGroup2 {
-		return groups
+	winAverage := win.Calculate(values, numbersAverage)
+	winGroups := win.Calculate(values, numbersGroups)
+	if winAverage > winGroups {
+		return numbersAverage, winAverage
+	} else {
+		return numbersGroups, winGroups
 	}
-
-	// neue Gruppe erstellen
-	var mergedGroup group
-
-	mergedGroup.startPos = groups[posGroup1].startPos // Anfangsposition der ersten Gruppe
-	mergedGroup.endPos = groups[posGroup2].endPos     // Endposition der zweiten Gruppe
-	mergedGroup.size = 1 + (mergedGroup.endPos - mergedGroup.startPos)
-
-	mergedGroup.caponeNumber = getAvgFromGroup(mergedGroup)
-
-	// Die beiden Gruppen durch die mergedGroup ersetzen
-	groups[posGroup2] = mergedGroup                            // mergedGroup auf die Position der zweiten Gruppen setzen
-	groups = append(groups[:posGroup1], groups[posGroup2:]...) // Gruppe an der ersten Position löschen
-
-	return groups
 
 }
 
-// findGroupsToMerge sucht aus allen Gruppen das Gruppenpaar aus, bei dem das Zusammenfügen mit dem geringsten Verlust
-// vorgenommen werden kann.
-func findGroupsToMerge(groups []group) []int {
-	if len(groups) == 0 {
+// numbersFromGroups berechnet mit Bildung von Gruppen die
+// AlCapone-Zahlen.
+func numbersFromGroups() [] int {
+	if len(values) == 0 {
+		return []int{}
+	}
+	groups = divide()
+
+	for len(groups) > 10 {
+		gp := createGroupPair()
+		gp.merge()
+	}
+
+	var numbers []int
+
+	for _, group := range groups {
+		numbers = append(numbers, group.caponeNumber)
+	}
+
+	return numbers
+}
+
+// numbersFromAverage teilt alle Glückszahlen der Teilnehmer
+// in Abschnitte ein. Für jeden Abschnitte wird dann aus den
+// Glückszahlen in dem Abschnitte ein Durchschnitt bestimmt.
+// Sollte keine Glückszahlen in einem Abschnitt enthalten sein,
+// so wird der Mittelwert aus oberer und unterer Grenze des
+// Abschnittes als Zahl für den Abschnitt gewählt. Die
+// Durchschnitte werden dann in einem Array zurückgegeben.
+func numbersFromAverage() []int {
+	if len(values) == 0 {
 		return []int{}
 	}
 
+	sectionDistance := (values[len(values)-1] - values[0]) / 10
+	var numbers []int
+	i := 0 // Zähler über das Array values
 
-	bestGroupPos := 0 // Standardwert für die Positino der ersten Gruppe des Gruppenpaares
+	for section := 1; section <= 10; section++ {
+		sum := 0
+		size := 0
 
-	averageFirstAndSecondGroup := getAvgFromGroups(groups, bestGroupPos, bestGroupPos+1)
-	winBestGroups := calculateWinOfTwoGroups(groups, bestGroupPos, bestGroupPos+1, averageFirstAndSecondGroup)
+		/*
+		section*sectionDistance berechnet die Obergrenze des
+		aktuellen Bereiches. Dabei hat man die aktuelle Nummer
+		der Sektion und den Abstand zwischen den Abschnitten.
+		*/
+		for ; values[i] < section*sectionDistance; i++ {
+			sum += values[i]
+			size++
+		}
 
-	// Findet das Gruppenpaar, das nach dem Zusammenfügen den größt möglichen Gewinn hätte.
-	for i := 1; i < len(groups)-1; i++ {
-		winInGroup := calculateWinOfTwoGroups(groups, i, i+1, getAvgFromGroups(groups, i, i+1))
-
-		if winInGroup > winBestGroups {
-			winBestGroups = winInGroup
-			bestGroupPos = i
+		if size == 0 {
+			average := ((section-1)*sectionDistance + section*sectionDistance) / 2
+			numbers = append(numbers, average)
+		} else {
+			numbers = append(numbers, sum/size)
 		}
 	}
 
-	return []int{bestGroupPos, bestGroupPos + 1}
+	return numbers
 }
 
-// calculateWinOfTwoGroups berechnet den Gewinn bzw. Verlust, wenn zwei Gruppen zusammengefügt werden würden.
-// Die beiden Gruppen müssen dabei direkt hintereinander im Array liegen.
-func calculateWinOfTwoGroups(groups []group, pos1 int, pos2 int, number int) int {
-	if pos1+1 != pos2 {
-		return 0
-	}
-
-	sum := 0 // Nettoverlust
-
-	// Nacheinander alle Element aus beiden Gruppen mit der gegebenen Zahl vergleichen
-	for i := groups[pos1].startPos; i <= groups[pos2].endPos; i++ {
-		sum += difference(number, values[i])
-	}
-
-	// Gesamtverlust wird mit dem Einsatz verrechnet zurückgegeben
-	return (25 * (groups[pos1].size + groups[pos2].size)) - sum
-}
-
-// divideGroups teilt die gewählten Zahlen der Teilnehmer in Gruppen ein, die durch das group-struct dargestellt werden.
-func divideGroups() []group {
+// divide teilt aus allen Glückszahlen Gruppen ein. Dabei
+// hat jede Gruppe einen Wert, dessen Differenz jeweils
+// zum Anfangs- und Endwert nicht größer als 25 ist. Dieser
+// Wert wird in jeder Gruppe der caponeNumber zugeordnet.
+func divide() []Group {
 	if len(values) == 0 {
-		return []group{}
+		panic("Keine Werte als Teilnehmerzahlen enthalten!")
 	}
 
-	var groups []group
+	var groups []Group
 
 	for i := 0; i < len(values); i++ {
-		group := group{}
+		group := Group{}
 		group.startPos = i
+		firstValue := values[group.startPos]
 
-		// Über alle Werte deren Differenz kleiner als 25 zum ersten Wert der Gruppe ist
-		for i+1 < len(values) && values[i]-values[group.startPos] < 25 {
+		for i+1 < len(values) && values[i+1]-firstValue <= 25 {
 			i++
 		}
 
-		medianPos := i // Median als Anhaltspunkt für zweiten Teil der Gruppe
+		mid := i
+		group.caponeNumber = values[mid]
 
-		// Über alle Werte deren Differenz kleiner als 25 zum mittleren Wert der Gruppe ist
-		for i+1 < len(values) && values[i]-values[medianPos] < 25 {
+		for i+1 < len(values) && values[i+1]-values[mid] <= 25 {
 			i++
 		}
 
-		group.endPos = i // Die Gruppe deckt nun einen Bereich von 50 ab.
+		group.endPos = i
 
 		group.size = 1 + (group.endPos - group.startPos)
-
-		group.caponeNumber = getAvgFromGroup(group) // Capone Zahl als Durchschnitt aller Zahlen in einer Gruppe
 
 		groups = append(groups, group)
 	}
@@ -142,7 +169,135 @@ func divideGroups() []group {
 	return groups
 }
 
-// difference berechnet den Betrag der Differenz zweier Zahlen
+// merge fügt ein Gruppenpaar zusammen. Dabei werden die beiden
+// Gruppen direkt in dem Array groups ersetzt.
+func (gp *GroupPair) merge() {
+
+	if !gp.valid() {
+		panic("Gruppen können nicht zusammengefügt werden!")
+	}
+
+	var group Group // neue Gruppe
+	group.startPos = gp.group1.startPos
+	group.endPos = gp.group2.endPos
+
+	group.size = gp.group1.size + gp.group2.size
+	group.caponeNumber = gp.median()
+
+	if !group.valid() {
+		panic("Fehler beim mergen von Gruppen!")
+	}
+
+	// zweite Gruppe durch neue Gruppe ersetzen:
+	groups[gp.group2.find()] = group
+	// erste Gruppe löschen:
+	groups = append(groups[:gp.group1.find()], groups[gp.group2.find():]...)
+
+}
+
+// win berechnet den Gewinn/Verlust, der beim Zusammenfügen
+// beider Gruppen aus GroupPair entstehen würde. Dafür wird
+// ein Median aus beiden Gruppen berechnet. Die Differenz
+// zwischen jeder Zahl in der neuen Gruppe zu deren Median
+// wird dann auf den Nettoverlust der Gruppe addiert. Der
+// zurückgegebene Gesamtgewinn berechnet sich dann aus den
+// Einsätzen der Teilnehmer, deren Zahl jeweils in einer der
+// beiden Gruppen ist, und dem berechneten Nettoverlust, der
+// von den Einsätzen abgezogen wird.
+func (gp *GroupPair) win() int {
+	if !gp.valid() {
+		panic("Kann den Gewinn einer Gruppe nicht berechnen!")
+	}
+
+	sum := 0
+	median := gp.median()
+
+	for i := gp.group1.startPos; i <= gp.group2.endPos; i++ {
+		sum += difference(median, values[i])
+	}
+
+	return (25 * (gp.group1.size + gp.group2.size)) - sum
+}
+
+// median berechnet den neuen Median der beiden Gruppen aus dem
+// Gruppenpaar. Als Median wird im diesen Fall die Zahl
+// bezeichnet, die zwischen beiden Gruppen steht.
+func (gp *GroupPair) median() int {
+	if !gp.valid() {
+		panic("Kann den Median einer Gruppe nicht berechnen!")
+	}
+
+	return values[(gp.group1.startPos+gp.group2.endPos)/2]
+
+	sum := 0
+
+	for i := gp.group1.startPos; i <= gp.group2.endPos; i++ {
+		sum += values[i]
+	}
+
+	return sum / (gp.group1.size + gp.group2.size)
+
+}
+
+// valid überprüft ein Gruppenpaar auf Richtigkeit.
+func (gp *GroupPair) valid() bool {
+	posGroup1 := gp.group1.find()
+	posGroup2 := gp.group2.find()
+
+	return !(
+		posGroup1 >= posGroup2 ||
+			!gp.group1.valid() ||
+			!gp.group2.valid())
+}
+
+// createGroupPair such in allen Gruppen nach dem besten
+// Gruppenpaar, welches zusammengefügt werden sollte.
+// Dabei wird über das gesamte Array groups iteriert, wobei
+// immer zwei Gruppen mit dem bisherigen besten Gruppenpaar
+// verglichen werden. Dabei wird das Gruppenpaar gewählt, das
+// beim Zusammenfügen den niedrigsten Verlust/höchsten Gewinn
+// erzielt.
+func createGroupPair() GroupPair {
+	if len(values) < 1 || len(groups) < 2 {
+		panic("Es kann nicht nach Gruppen zum Zusammenfügen gesucht werden")
+	}
+
+	gp := GroupPair{&groups[0], &groups[1]}
+	for i := 1; i < len(groups)-1; i++ {
+		currrentGP := GroupPair{&groups[i], &groups[i+1]}
+
+		if gp.win() < currrentGP.win() {
+			gp = currrentGP
+		}
+	}
+
+	return gp
+}
+
+// valid überprüft ob der Bereich, den eine Gruppe abdeckt
+// innerhalb dem Bereich des Arrays values ist, auf das sich
+// jede Gruppe bezieht.
+func (g *Group) valid() bool {
+
+	return !(
+		g.endPos < g.startPos ||
+			g.startPos < 0 ||
+			g.endPos > len(values)-1 ||
+			g.size != 1+(g.endPos-g.startPos))
+}
+
+// find sucht die Positon der Grupppe g im Array groups.
+func (g *Group) find() int {
+	for i := 0; i < len(groups); i++ {
+		if g == &groups[i] {
+			return i
+		}
+	}
+
+	panic("Eine Gruppe wurde nicht im Array groups gefunden")
+}
+
+// difference berechnet den Betrag der Differenz zweier Zahlen.
 func difference(number1 int, number2 int) int {
 	difference := number1 - number2
 
@@ -153,59 +308,3 @@ func difference(number1 int, number2 int) int {
 	return difference
 }
 
-// getAvgFromGroup berechnet den Durchschnitt aller Elemente aus einer Gruppe
-func getAvgFromGroup(group group) int {
-	sum := 0
-
-	for i := group.startPos; i <= group.endPos; i++ {
-		sum += values[i]
-	}
-
-	return sum / group.size
-}
-
-// getAvgFromGroups berechnet den Durchschnitt aller Zahlen von zwei Gruppen
-func getAvgFromGroups(groups []group, pos1 int, pos2 int) int {
-	return (getAvgFromGroup(groups[pos1]) + getAvgFromGroup(groups[pos2])) / 2
-}
-
-// similarDistance überprüft, ob die gewählten Zahlen jeweils den gleichen Abstand zu ihren Nachbarzahlen haben.
-func similarDistance() bool {
-	if len(values) <= 1 {
-		return true
-	}
-
-	distance := difference(values[0], values[1])
-
-	for i := 1; i < len(values) - 1; i++ {
-		if difference(values[i], values[i+1]) != distance {
-			return false
-		}
-	}
-
-	return true
-}
-
-// caponeNumbersFromSections erstellt die Capone Zahlen durch den Mittelwert aus jeweils 10 Abschnitten.
-// Insbesonder bei gleich großen Gruppen wird dies angewendet.
-func caponeNumbersFromSections() []int {
-	sectionStep := values[len(values)-1] / 10 // Differenz zwischen Anfang und Ende eines Bereiches
-
-	var caponeNumbers []int
-
-	valuesIterator := 0
-
-	for i := 1; i <= 10; i++ {
-		sumInSection := 0 // Summe aller Zahlen, die im Bereich enthalten sind
-		sectionSize := 0
-		// Alle Zahlen, die im i-ten Bereich sind
-		for ;values[valuesIterator] <= i*sectionStep; valuesIterator++ {
-			sumInSection += values[valuesIterator]
-			sectionSize++
-		}
-
-		caponeNumbers = append(caponeNumbers, sumInSection/sectionSize)
-	}
-
-	return caponeNumbers
-}

@@ -1,7 +1,7 @@
-Dokumentation.pdf: template/eisvogel.tex Dokumentation.md clean
-	pandoc Dokumentation.md --template template/eisvogel.tex -o Dokumentation.pdf
+Aufgabe3.pdf: template/eisvogel.tex Aufgabe3.md
+	pandoc Aufgabe3.md --template template/eisvogel.tex -o Aufgabe3.pdf --listings
 clean: 
-	$(RM) Dokumentation.pdf
+	$(RM) Aufgabe3.pdf
 
 open: 
-	google-chrome Dokumentation.pdf
+	firefox Aufgabe3.pdf

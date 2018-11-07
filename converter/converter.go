@@ -1,3 +1,5 @@
+// Package converter implementiert die Logik, um eine
+// Eingabedatei einzulesen.
 package converter
 
 import (
@@ -6,8 +8,9 @@ import (
 	"strconv"
 )
 
-// Convert nimmt als Parameter den Dateipfad zu der Datei mit den gewählten Zahlen der Teilnehmer entgegen. Alle Zahlen aus der path Datei
-// werden in ein Array geschrieben. Am Schluss wird das fertige Array zurückgegeben.
+// Convert nimmt als Parameter den Dateipfad zu der Datei mit
+// den Glückszahlen der Teilnehmer entgegen. Alle Zahlen aus
+// dieser path-Datei werden als Array zurückgegeben.
 func Convert (path string) []int {
 	r, err := os.Open(path) // io.Reader r erstellen
 
@@ -33,5 +36,7 @@ func Convert (path string) []int {
 
 	return result
 
-	// https://stackoverflow.com/questions/9862443/golang-is-there-a-better-way-read-a-file-of-integers-into-an-array
 }
+
+// Quelle: https://stackoverflow.com/questions/9862443/golang-is-there-a-better-way-read-a-file-of-integers-into-an-array
+
