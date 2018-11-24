@@ -14,49 +14,49 @@ logo: material/ema-bonn.jpg
 logo-width: 200
 ---
 
-Bei der Aufgabe _Voll Daneben_ setzen Teilnehmer ihren Einsatz von 25$ auf ihre persönliche _Glückszahl_. AlCapone Junior versucht dann anhand der Glückszahlen der Teilnehmer 10 Zahlen zu wählen. Für jeden Teilnehmer wird dann die Differenz zwischen seiner Glückszahl und der am nächsten liegenden AlCapone-Zahl ausgezahlt. Ziel ist es, einen Algorithmus zu schreiben, der AlCapone's Zahlen bestimmt.
+Bei der Aufgabe _Voll Daneben_ setzen Teilnehmer ihren Einsatz von 25$ auf ihre persönliche _Glückszahl_. AlCapone Junior versucht dann, anhand der Glückszahlen der Teilnehmer 10 Zahlen zu wählen. Für jeden Teilnehmer wird dann die Differenz zwischen seiner Glückszahl und der am nächsten liegenden AlCapone-Zahl ausgezahlt. Ziel ist es, einen Algorithmus zu schreiben, der AlCapone's Zahlen so bestimmt, dass AlCapone möglichst einen Gewinn erzielt.
 
 # Lösungsidee
 
-Die Lösungsidee teilt sich auf in zwei unterschiedliche Vorgehen auf.
+Die Lösungsidee teilt sich in zwei unterschiedliche Vorgehen auf.
 
 1. Berechnen der Zahlen aus dem Durchschnitt gleich großer Abschnitte.
-2. Gruppen aus den Glückszahlen der Teilnehmer bilden, wobei bei jeder Gruppe ein Gewinn garantiert ist.
+2. Bilden von Gruppen aus den Glückszahlen der Teilnehmer, wobei bei jeder Gruppe ein Gewinn garantiert ist.
 
 Für beide Verfahren sollten die Glückszahlen der Teilnehmer aufsteigend sortiert vorliegen.
 
 ## Verfahren 1 - Durchschnitt gleich großer Abschnitte
-Zu Beginn wird der gesamte Zahlenbereich[^Zahlenbereich] betrachtet. Dieser wird in zehn gleich große Abschnitte unterteilt. Für jeden Abschnitt wird der Durchschnitt aller Glückszahlen im Abschnitt berechnet. Der Durchschnitt jedes Abschnittes gilt dann als eine von zehn Zahlen für AlCapone. Da es nur zehn Abschnitte gibt, gibt es dann auch nur zehn Zahlen
+Zu Beginn wird der gesamte Zahlenbereich[^Zahlenbereich] betrachtet. Dieser wird in zehn gleich große Abschnitte unterteilt. Für jeden Abschnitt wird der Durchschnitt aller Glückszahlen im Abschnitt berechnet. Der Durchschnitt jedes Abschnittes gilt dann als eine von zehn Zahlen für AlCapone. Da es nur zehn Abschnitte gibt, gibt es dann auch nur zehn Zahlen.
 
 [^Zahlenbereich]: Als Zahlenbereich wird der Abstand zwischen kleinster und größter Glückszahl bezeichnet. Der Begriff beschreibt also den Bereich, in dem sich alle Glückszahlen befinden. 
 
 ## Verfahren 2 - Capone Zahlen durch Gruppen
 Bei diesem Verfahren werden aus allen Glückszahlen Gruppen gebildet. Dabei hat jede Gruppe einen Teil von Glückszahlen, die sie abdeckt. Für jede Gruppe gibt es eine Zahl, die wir hier `capone` nennen. Diese Zahl hat zur ersten und letzen Glückszahl in einer Gruppe je eine Differenz, die kleiner als 25 ist. 
 
-Diese maximale Differenz von unter 25 sorgt dafür, dass AlCapone Jr. für jede Glückszahl eine Auszahlung unter 25 hat. Durch den Einsatz von 25 und die Auszahlung der Differenz zu `capone`, gilt für jede Glückszahl $Einsatz-Differenz=Gewinn$. In jeder Gruppe ist die Differenz zu capone jedoch kleiner als der Einsatz. Somit wird ein Gewinn erwirtschaftet. 
+Diese maximale Differenz von unter 25 sorgt dafür, dass AlCapone Jr. für jede Glückszahl eine Auszahlung unter 25 hat. Durch den Einsatz von 25 und die Auszahlung der Differenz zu `capone`, gilt für jede Glückszahl $Einsatz-Differenz=Gewinn$. In jeder Gruppe ist die Differenz zu `capone` jedoch kleiner als der Einsatz. Somit wird ein Gewinn erwirtschaftet. 
 
 ![Beispiel Gruppe](./material/Gruppe.png){width=50%}
 
-Im Abbildung 1 ist ein Beispiel für eine Gruppe aus der Menge an Glückszahlen. So hat man in der zweiten Gruppe die Zahlen von 46 bis 93. Die Zahl 70 dient dabei als `capone` Zahl, da sie einen Abstand von unter 25 zur ersten und letzten Zahl der Gruppe hat. Der Abstand zur 45 beziehungsweise 96 ist größer als 25. Daher sind diese beiden Zahlen jeweils in anderen Gruppen.
+Abbildung 1 ist ein Beispiel für eine Gruppe aus der Menge an Glückszahlen. So hat man in der zweiten Gruppe die Zahlen von 46 bis 93. Die Zahl 70 dient dabei als `capone` Zahl, da sie einen Abstand von unter 25 zur ersten und letzten Zahl der Gruppe hat. Der Abstand zur 45 beziehungsweise 96 ist größer als 25. Daher sind diese beiden Zahlen jeweils in anderen Gruppen.
 
-Wählt man jetzt für jede Gruppe die Zahl `capone`, als eine der Zehn AlCapone-Zahlen, so würde man garantiert einen Gewinn erzielen. Sollte es mehr als zehn Gruppen geben, und damit mehr als zehn mögliche Zahlen für AlCapone Jr. vorhanden sein, müssen Gruppen zusammengefügt werden.
+Wählt man jetzt für jede Gruppe die Zahl `capone` als eine der Zehn AlCapone-Zahlen, so würde man garantiert einen Gewinn erzielen. Sollte es mehr als zehn Gruppen geben, und damit mehr als zehn mögliche Zahlen für AlCapone Jr. vorhanden sein, müssen Gruppen zusammengefügt werden.
 
 ### Gruppen zusammenfügen
 
-Bei mehr als zehn Gruppen, müssen zwei Gruppen jeweils so lange zusammengefügt werden, bis die Anzahl der Gruppen nur noch zehn beträgt. Bei der Findung des passenden Gruppenpaares muss beachtet werden, dass nur direkt hintereinander liegende Gruppen zusammengefügt werden sollten. Andernfalls würden sich Gruppen überschneiden.
+Bei mehr als zehn Gruppen müssen zwei Gruppen jeweils so lange zusammengefügt werden, bis die Anzahl der Gruppen nur noch zehn beträgt. Bei der Findung des passenden Gruppenpaares muss beachtet werden, dass nur direkt hintereinander liegende Gruppen zusammengefügt werden sollten. Andernfalls würden sich Gruppen überschneiden.
 
-Um ein passendes Gruppenpaar zu finden, wird für jedes mögliche Gruppenpaar der Gewinn für jede Zahl im Gruppenpaar berechnet [^GewinnMerged]. Das Gruppenpaar mit dem höchsten Gesamtgewinn wird zusammengefügt. Da die Wahl der Gruppen auf dem Prinzip des garantierten Gewinnes basiert, möchte man auch bei zusammengefügten Gruppen dieses Prinzip garantieren. 
+Um ein passendes Gruppenpaar zu finden, wird für jedes mögliche Gruppenpaar der Gewinn für jede Zahl im Gruppenpaar berechnet.[^GewinnMerged] Das Gruppenpaar mit dem höchsten Gesamtgewinn wird zusammengefügt. Da die Wahl der Gruppen auf dem Prinzip des garantierten Gewinnes basiert, möchte man auch bei zusammengefügten Gruppen dieses Prinzip garantieren. 
 
 Meist lässt sich aber bei einer zusammengefügten Gruppe ein Gewinn nicht mehr garantieren, da der Bereich der neuen Gruppe zu groß ist. Also versucht man eine Gruppe zu bilden, bei der die Glückszahlen innerhalb der neuen Gruppe einen möglichst geringen Abstand zu der `capone` Zahl der neuen Gruppe haben. Anzumerken ist hierbei, dass die `capone` Zahl nicht mehr berechnet wird, sondern den Median aller Glückszahlen der Teilnehmer in der neuen Gruppe darstellt.
 
 [^GewinnMerged]: Der Gewinn für jede Glückszahl wird dabei anhand der Differenz zwischen der Glückszahl und `capone` der neuen Gruppe berechnet.
 
 ## Wahl des passenden Verfahrens
-Grundsätzlich werden bei der Lösung der Aufgabe beide Verfahren durchgeführt, und das Gewinnbringenste wird dann angewendet. Dennoch lässt sich abschätzen, wann welches Verfahren am effektivsten ist:
+Grundsätzlich werden bei der Lösung der Aufgabe beide Verfahren durchgeführt und das gewinnbringenste Verfahren wird dann angewendet. Dennoch lässt sich abschätzen, wann welches Verfahren am effektivsten ist:
 
-Bei gleichmäßiger Verteilung der Glückszahlen über den Zahlenbereich, sollte das erste Verfahren (Durchschnitt gleich großer Abschnitte) gewählt werden. Durch die gleichmäßige Verteilung der zehn Zahlen für AlCapone Jr. wird der gesamte Bereich an Glückszahlen ebenfalls gleichmäßig abgedeckt.
+Bei gleichmäßiger Verteilung der Glückszahlen über den Zahlenbereich sollte das erste Verfahren (Durchschnitt gleich großer Abschnitte) gewählt werden. Durch die gleichmäßige Verteilung der zehn Zahlen für AlCapone Jr. wird der gesamte Bereich an Glückszahlen ebenfalls gleichmäßig abgedeckt.
 
-Bei ungleichmäßiger Verteilung der Glückszahlen ist das zweite Verfahren (Gruppen bilden) effektiver. Bei diesem Verfahren werden auch nur Gruppen für Zahlen gebildet, die tatsächlich vorhanden sind. Im Gegensatz dazu werden beim ersten Verfahren die Capone-Zahlen unabhängig von der Anzahl an Glückszahlen in einem Bereich gebildet. Häufig ist es aber bei ungleichmäßiger Verteilung gewinnbringender, wenn man versucht für viele nah beieinander liegende Glückszahlen einen Gewinn zu erwirtschaften, und dafür einelne Zahlen zu vernachlässigen
+Bei ungleichmäßiger Verteilung der Glückszahlen ist das zweite Verfahren (Gruppen bilden) effektiver. Bei diesem Verfahren werden auch nur Gruppen für Zahlen gebildet, die tatsächlich vorhanden sind. Im Gegensatz dazu werden beim ersten Verfahren die Capone-Zahlen unabhängig von der Anzahl an Glückszahlen in einem Bereich gebildet. Häufig ist es aber bei ungleichmäßiger Verteilung gewinnbringender, wenn man versucht, für viele nah beieinander liegende Glückszahlen einen Gewinn zu erwirtschaften, und dafür einzelne Zahlen zu vernachlässigen.
 
 
 # Umsetzung
@@ -87,7 +87,7 @@ In dem Packet `alcapone` werden zwei globale Variablen initialisiert.
 
 ## Verfahren 1 - Durchschnitt gleich großer Abschnitte
 
-Zuerst wird die Abschnittsgröße Bestimmt:
+Zuerst wird die Abschnittsgröße bestimmt:
 
 $$Abschnittsgroesse = \frac{groesste \; Glückszahl - kleinste \; Glückszahl}{10}$$
 
@@ -143,6 +143,9 @@ FÜR jeden Abschnitt:
 		FÜGE Summe des Abschnittes / Anzahl zu Capone Zahlen hinzu
 
 ```
+
+\pagebreak
+
 ## Verfahren 2 - Capone Zahlen durch Gruppen
 
 ### Das Group-struct
@@ -174,9 +177,9 @@ Jede Gruppe kann außerdem auf zwei Methoden zugreifen:
 
 
 
-Um die Gruppen aus den Glückszahlen zu erstellen, wird die Methode `divide()` aufgerufen. Sie liefert ein Array aus `Group`-Objekten wieder.
+Um die Gruppen aus den Glückszahlen zu erstellen, wird die Methode `divide()` aufgerufen. Sie liefert ein Array aus `Group`-Objekten.
 
-Das Einteilen und finden der Zahlen Funktioniert nach folgendem Prinzip:
+Das Einteilen und Finden der Zahlen funktioniert nach folgendem Prinzip:
 
 ```pseudo
 SOLANG Differenz erster Zahl der Gruppe und aktueller Glückszahl <= 25:
@@ -187,6 +190,7 @@ SETZE capone-Zahl auf aktuelle Glückszahl
 SOLANG Differenz erster Zahl der Gruppe und aktueller Glückszahl <= 25:
 	GEHE eine Glückszahl weiter
 ```
+\pagebreak
 
 Die Implementierung des obigen Pseudocodes:
 
@@ -203,7 +207,7 @@ for i+1<len(values) && values[i+1] - values[mid] <= 25 {
 }
 ```
 
-Dieses Vorgehen wird solang ausgeführt, bis alle Glückszahl einer Gruppe angehören.
+Dieses Vorgehen wird solange ausgeführt, bis alle Glückszahlen einer Gruppe angehören.
 
 
 ### Gruppen zusammenfügen
@@ -264,7 +268,9 @@ FÜR jede Gruppe g:
 ## Gewinnberechnung
 Für die Berechnung von AlCapone's Gewinn werden sowohl die Glückszahlen der Teilnehmer, als auch die gewählten zehn Zahlen von AlCapone Jr. benötigt. Für jede Glückszahl wird dann die am nächsten liegende Capone-Zahl gesucht. Die Differenz zwischen der Capone-Zahl und der aktuellen Glückszahl wird auf die Variable `payout` addiert. Sie gibt die Summe der Auszahlungen an.
 
-Der Gewinn setzt sich dann aus der Differenz zwischen Gesamtsumme des Einsatztes und Gesamtsumme der Auszahlungen zusammen.
+Der Gewinn setzt sich dann aus der Differenz zwischen Gesamtsumme des Einsatzes und Gesamtsumme der Auszahlungen zusammen.
+
+\pagebreak
 
 ```go
 payout := 0
@@ -298,7 +304,7 @@ Die von AlCapone zu wählenden Zahlen:
 Gewinn:  20
 ```
 
-Im 1. Beispiel haben alle Zahlen den gleichen Abstand zu ihren Nachbarn. Daher ist hierbei das 1. Verfahren deutlich effektiver, da die Verteilung der Glückszahlen gleichmäßig ist. Man sieht daher auch eine rech gleichmäßige Verteilung der Capone-Zahlen. Dass die gewählten zehn Zahlen nicht genau den Abstand 100 zueinander haben, liegt insbesondere daran, dass der Abstand der einzelnen Abschnitte 99 und nicht 100 beträgt. 
+Im 1. Beispiel haben alle Zahlen den gleichen Abstand zu ihren Nachbarn. Daher ist hierbei das 1. Verfahren deutlich effektiver, da die Verteilung der Glückszahlen gleichmäßig ist. Man sieht daher auch eine recht gleichmäßige Verteilung der Capone-Zahlen. Dass die gewählten zehn Zahlen nicht genau den Abstand 100 zueinander haben, liegt insbesondere daran, dass der Abstand der einzelnen Abschnitte 99 und nicht 100 beträgt. 
 
 ## Beispiel 2
 
@@ -340,7 +346,7 @@ Die von AlCapone zu wählenden Zahlen:
 Gewinn:  183
 ```
 
-Beispiel 3 hat wieder gleichmäßige angeordnete Zahlen. Daher wird das 1. Verfahren angewendet. Wendet man das zweite Verfahren an, so erhält man immer noch einen Gewinn von 100, da viele Glückszahlen mehrmals vorkommen, und somit sich das Bilden von Gruppen ebenfalls lohnt.
+Beispiel 3 hat wieder gleichmäßig angeordnete Zahlen. Daher wird das 1. Verfahren angewendet. Wendet man das zweite Verfahren an, so erhält man immer noch einen Gewinn von 100, da viele Glückszahlen mehrmals vorkommen, und somit sich das Bilden von Gruppen ebenfalls lohnt.
 
 ## Beispiel 4
 
@@ -361,7 +367,7 @@ Die von AlCapone zu wählenden Zahlen:
 Gewinn:  -56
 ```
 
-Das vierte Beispiel enthält jede Zahl von 1 bis 1000 je einmal. Daher ist ein Gewinn unmöglich. Dieses Beispiel zeigt auch, dass der Algorithmus nicht perfekt ist, und einen Gewinn nicht garantieren kann.
+Das vierte Beispiel enthält jede Zahl von 1 bis 1000 je einmal. Daher ist ein Gewinn unmöglich. Dieses Beispiel zeigt auch, dass der Algorithmus nicht perfekt ist und einen Gewinn nicht garantieren kann.
 
 
 ## Beispiel 5
@@ -409,13 +415,13 @@ Das letzte Beispiel beweist, dass der Algorithmus auch funktioniert, wenn keine 
 
 # Quellcode
 
-Ein Auswahl der wichtigsten Methoden aus aus dem Packet alcapone
+Ein Auswahl der wichtigsten Methoden aus dem Packet `alcapone`:
 
 ```go
 // Choose bekommt die sortierten Glückszahlen der Teilnehmer
 // als Array übergeben und berechnet daraus die Zahlen, die
 // AlCapone Jr. wählen sollte. Dabei ist ein Gewinn nicht
-// garantiert, sondern es wird lediglich versucht einen
+// garantiert, sondern es wird lediglich versucht, einen
 // möglichst hohen Gewinn zu erzielen. Bei einer Länge von
 // maximal 10 werden die Glückszahlen als AlCapone-Zahlen
 // zurückgegeben. Vorher wird jedoch die Länge auf 10 erhöht.
@@ -481,9 +487,9 @@ func numbersFromGroups() [] int {
 
 ```go
 // numbersFromAverage teilt alle Glückszahlen der Teilnehmer
-// in Abschnitte ein. Für jeden Abschnitte wird dann aus den
-// Glückszahlen in dem Abschnitte ein Durchschnitt bestimmt.
-// Sollte keine Glückszahlen in einem Abschnitt enthalten sein,
+// in Abschnitte ein. Für jeden Abschnitt wird dann aus den
+// Glückszahlen in dem Abschnitt ein Durchschnitt bestimmt.
+// Sollten keine Glückszahlen in einem Abschnitt enthalten sein,
 // so wird der Mittelwert aus oberer und unterer Grenze des
 // Abschnittes als Zahl für den Abschnitt gewählt. Die
 // Durchschnitte werden dann in einem Array zurückgegeben.
@@ -525,7 +531,7 @@ func numbersFromAverage() []int {
 
 
 ```go
-// createGroupPair such in allen Gruppen nach dem besten
+// createGroupPair sucht in allen Gruppen nach dem besten
 // Gruppenpaar, welches zusammengefügt werden sollte.
 // Dabei wird über das gesamte Array groups iteriert, wobei
 // immer zwei Gruppen mit dem bisherigen besten Gruppenpaar

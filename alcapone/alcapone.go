@@ -35,7 +35,7 @@ type GroupPair struct {
 // Choose bekommt die sortierten Glückszahlen der Teilnehmer
 // als Array übergeben und berechnet daraus die Zahlen, die
 // AlCapone Jr. wählen sollte. Dabei ist ein Gewinn nicht
-// garantiert, sondern es wird lediglich versucht einen
+// garantiert, sondern es wird lediglich versucht, einen
 // möglichst hohen Gewinn zu erzielen. Bei einer Länge von
 // maximal 10 werden die Glückszahlen als AlCapone-Zahlen
 // zurückgegeben. Vorher wird jedoch die Länge auf 10 erhöht.
@@ -92,9 +92,9 @@ func numbersFromGroups() [] int {
 }
 
 // numbersFromAverage teilt alle Glückszahlen der Teilnehmer
-// in Abschnitte ein. Für jeden Abschnitte wird dann aus den
-// Glückszahlen in dem Abschnitte ein Durchschnitt bestimmt.
-// Sollte keine Glückszahlen in einem Abschnitt enthalten sein,
+// in Abschnitte ein. Für jeden Abschnitt wird dann aus den
+// Glückszahlen in dem Abschnitt ein Durchschnitt bestimmt.
+// Sollten keine Glückszahlen in einem Abschnitt enthalten sein,
 // so wird der Mittelwert aus oberer und unterer Grenze des
 // Abschnittes als Zahl für den Abschnitt gewählt. Die
 // Durchschnitte werden dann in einem Array zurückgegeben.
@@ -250,7 +250,7 @@ func (gp *GroupPair) valid() bool {
 			!gp.group2.valid())
 }
 
-// createGroupPair such in allen Gruppen nach dem besten
+// createGroupPair sucht in allen Gruppen nach dem besten
 // Gruppenpaar, welches zusammengefügt werden sollte.
 // Dabei wird über das gesamte Array groups iteriert, wobei
 // immer zwei Gruppen mit dem bisherigen besten Gruppenpaar
