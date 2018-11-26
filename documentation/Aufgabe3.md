@@ -61,9 +61,9 @@ Bei ungleichmäßiger Verteilung der Glückszahlen ist das zweite Verfahren (Gru
 
 # Umsetzung
 
-Die Umsetzung erfolgt in der Sprache Go. Dabei ist das Projekt in mehrere Packete aufgeteilt.
+Die Umsetzung erfolgt in der Sprache Go. Dabei ist das Projekt in mehrere Packages aufgeteilt.
 
-## Packete
+## Packages
 
 
 | Package   | Zweck                                                                                          |
@@ -78,7 +78,7 @@ Die Umsetzung erfolgt in der Sprache Go. Dabei ist das Projekt in mehrere Packet
 
 ## Variablen
 
-In dem Packet `alcapone` werden zwei globale Variablen initialisiert.
+In dem Package `alcapone` werden zwei globale Variablen initialisiert.
 
 1. `values` speichert alle Glückszahlen der Teilnehmer in einem Array[^Slice].
 2. `groups` speichert alle Gruppen aus Verfahren 2 in einem Array.
@@ -415,7 +415,7 @@ Das letzte Beispiel beweist, dass der Algorithmus auch funktioniert, wenn keine 
 
 # Quellcode
 
-Ein Auswahl der wichtigsten Methoden aus dem Packet `alcapone`:
+Ein Auswahl der wichtigsten Methoden aus dem Package `alcapone`:
 
 ```go
 // Choose bekommt die sortierten Glückszahlen der Teilnehmer
